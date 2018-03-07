@@ -1,0 +1,32 @@
+---
+- name: Configure useradd
+  lineinfile:
+    dest: /etc/default/useradd
+    create: true
+    line: "{{ item.key }}={{ item.value }}"
+    regexp: "^{{ item.key }}="
+  with_dict: "{{ pam_useradd_lines }}"
+  when: pam_useradd_lines is defined
+
+- name: Configure login.defs
+  lineinfile:
+    dest: /etc/login.defs
+    create: true
+    line: "{{ item.key }} {{ item.value }}"
+    regexp: "^{{ item.key }}"
+  with_dict: "{{ pam_login_defs_lines }}"
+  when: pam_login_defs_lines is defined
+
+- name: Set pam settings
+  pamd:
+    name: "{{ item.name }}"
+    type: "{{ item.type }}"
+    control: "{{ item.control }}"
+    module_arguments: "{{ item.module_arguments | default(None) }}"
+    module_path: "{{ item.module_path }}"
+    new_control: "{{ item.new_control | default(None) }}"
+    new_module_path: "{{ item.new_module_path | default(None) }}"
+    new_type: "{{ item.new_type | default(None) }}"
+    state: "{{ item.state | default('updated') }}"
+  with_items:
+    - "{{ pam_settings }}"

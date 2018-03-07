@@ -1,0 +1,8 @@
+---
+#pam_useradd_lines:
+#  INACTIVE: 35
+#
+#pam_login_defs_lines:
+#  PASS_MAX_DAYS: 180
+#  PASS_MIN_DAYS: 1
+~                  
